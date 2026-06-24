@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pho Dang — Authentic Vietnamese Café · Winooski, VT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0B0608;   /* deep burgundy-black */
+      --bg-alt:   #120A0D;   /* slightly lifted */
+      --bg-lift:  #190F13;   /* card surface */
+      --gold:     #D4A22A;
+      --gold-hi:  #EBB83C;
+      --text:     #EDE8DC;
+      --text-dim: rgba(237,232,220,.5);
+      --text-sub: rgba(237,232,220,.24);
+      --border:   rgba(212,162,42,.16);
+      --border-hi:rgba(212,162,42,.42);
+
+      --cream:    var(--bg);
+      --parchment:var(--bg-alt);
+      --tan:      var(--bg-lift);
+      --deep:     #060305;
+      --charcoal: var(--text-dim);
+      --white:    var(--text);
+      --amber:    var(--gold-hi);
+      --rust:     #8B3A1A;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: #000;
+      scroll-padding-top: 112px;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── OUTER BORDER FRAME ── */
+    #page-frame {
+      position: fixed; inset: 10px; z-index: 9999;
+      pointer-events: none;
+      border: 1px solid var(--gold);
+      opacity: .55;
+    }
+    /* Corner accent marks */
+    #page-frame::before, #page-frame::after,
+    #page-frame .c1, #page-frame .c2 {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+    }
+    #page-frame::before {
+      top: -4px; left: -4px;
+      border-top: 2px solid var(--gold); border-left: 2px solid var(--gold);
+    }
+    #page-frame::after {
+      top: -4px; right: -4px;
+      border-top: 2px solid var(--gold); border-right: 2px solid var(--gold);
+    }
+    #page-frame .c1 {
+      bottom: -4px; left: -4px;
+      border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold);
+    }
+    #page-frame .c2 {
+      bottom: -4px; right: -4px;
+      border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold);
+    }
+
+    /* ══════════════════════════════════════
+       HEADER  —  two-tier redesign
+       Tier 1: slim utility bar (location / phone)
+       Tier 2: main nav with wordmark
+    ══════════════════════════════════════ */
+
+    #header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      transition: background .4s, box-shadow .4s;
+    }
+    #header.scrolled {
+      background: rgba(5,10,6,.97);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: 0 1px 0 var(--border-hi), 0 4px 40px rgba(0,0,0,.7);
+    }
+
+    /* ── Tier 1: utility bar ── */
+    .header-utility {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4vw;
+      height: 34px;
+      border-bottom: 1px solid rgba(212,162,42,.12);
+      background: rgba(4,8,5,.55);
+      transition: height .35s, opacity .35s;
+    }
+    #header.scrolled .header-utility {
+      height: 0; opacity: 0; overflow: hidden; pointer-events: none;
+    }
+    .utility-left, .utility-right {
+      display: flex; align-items: center; gap: 1.6rem;
+    }
+    .utility-item {
+      font-size: .6rem; letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(237,232,220,.42); font-weight: 400;
+      white-space: nowrap;
+    }
+    .utility-item a {
+      color: inherit; text-decoration: none;
+      transition: color .2s;
+    }
+    .utility-item a:hover { color: var(--gold); }
+    .utility-divider {
+      width: 1px; height: 10px; background: var(--border-hi); flex-shrink: 0;
+    }
+    .utility-center {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .utility-ornament {
+      width: 28px; height: 1px; background: var(--gold); opacity: .45;
+    }
+    .utility-center-text {
+      font-size: .52rem; letter-spacing: .32em; text-transform: uppercase;
+      color: rgba(237,232,220,.3); font-weight: 400;
+    }
+
+    /* ── Tier 2: main nav bar ── */
+    .header-main {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 4vw;
+      height: 78px;
+      position: relative;
+      transition: height .35s;
+    }
+    #header.scrolled .header-main { height: 62px; }
+
+    /* Left links */
+    .nav-links-left, .nav-links-right {
+      display: flex; align-items: center; list-style: none;
+    }
+    .nav-links-left  { gap: .2rem; justify-content: flex-start; }
+    .nav-links-right { gap: .2rem; justify-content: flex-end; }
+
+    .nav-links-left a,
+    .nav-links-right a:not(.header-cta) {
+      font-family: 'Jost', sans-serif;
+      font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+      font-weight: 500; color: rgba(237,232,220,.68);
+      text-decoration: none;
+      padding: .9rem 1.2rem;
+      position: relative; display: inline-block;
+      transition: color .25s;
+    }
+    /* Animated underline */
+    .nav-links-left a::after,
+    .nav-links-right a:not(.header-cta)::after {
+      content: '';
+      position: absolute; bottom: .55rem; left: 1.2rem; right: 1.2rem;
+      height: 1px; background: var(--gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease;
+    }
+    .nav-links-left a:hover,
+    .nav-links-right a:not(.header-cta):hover {
+      color: #fff;
+    }
+    .nav-links-left a:hover::after,
+    .nav-links-right a:not(.header-cta):hover::after {
+      transform: scaleX(1);
+    }
+
+    /* CTA button */
+    .header-cta {
+      font-family: 'Jost', sans-serif;
+      font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+      font-weight: 600; color: var(--deep) !important;
+      text-decoration: none;
+      background: var(--gold);
+      padding: .6rem 1.5rem;
+      margin-left: .6rem;
+      display: inline-block;
+      transition: background .2s;
+    }
+    .header-cta:hover { background: var(--gold-hi); }
+
+    /* ── Center wordmark ── */
+    .header-wordmark {
+      display: flex; flex-direction: column; align-items: center;
+      text-decoration: none; gap: 0;
+      padding: .4rem 2rem;
+      transition: opacity .2s;
+    }
+    .header-wordmark:hover { opacity: .8; }
+
+    .wm-rule-wrap {
+      display: flex; align-items: center; gap: .6rem;
+      width: 100%; justify-content: center;
+      margin-bottom: .18rem;
+    }
+    .wm-rule {
+      flex: 1; height: 1px; max-width: 36px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+    .wm-rule.right {
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+    .wm-diamond {
+      width: 5px; height: 5px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    .wm-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 400;
+      letter-spacing: .42em;
+      text-transform: uppercase;
+      color: #fff; line-height: 1;
+      padding-left: .42em; /* optical tracking offset */
+      white-space: nowrap;
+      transition: font-size .35s;
+    }
+    #header.scrolled .wm-name { font-size: 1.3rem; }
+
+    .wm-sub {
+      font-family: 'Jost', sans-serif;
+      font-size: .5rem; letter-spacing: .46em;
+      text-transform: uppercase; color: var(--gold);
+      font-weight: 400; margin-top: .3rem;
+      padding-left: .46em;
+      white-space: nowrap;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 85%, rgba(201,151,46,.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 130px; left: 8vw; right: 8vw;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-hi) 30%, var(--border-hi) 70%, transparent);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      padding: 0 8vw 9vh;
+      display: flex; flex-direction: column; align-items: flex-start;
+      max-width: 900px;
+    }
+    .hero-tag {
+      font-size: .65rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--gold); font-weight: 400;
+      margin-bottom: 1.8rem;
+      opacity: 0; animation: fadeUp .7s .2s forwards;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 8vw, 6.5rem);
+      font-weight: 300; line-height: 1.0;
+      color: var(--white); letter-spacing: -.01em;
+      opacity: 0; animation: fadeUp .9s .4s forwards;
+    }
+    .hero-title em { font-style: italic; color: rgba(237,232,220,.45); }
+    .hero-sub {
+      margin-top: 1.8rem; max-width: 480px;
+      font-size: .95rem; line-height: 1.8;
+      color: rgba(237,232,220,.38); font-weight: 300; letter-spacing: .03em;
+      opacity: 0; animation: fadeUp .8s .65s forwards;
+    }
+    .hero-cta {
+      margin-top: 2.6rem; display: flex; gap: 1rem; align-items: center;
+      opacity: 0; animation: fadeUp .8s .85s forwards;
+    }
+    .btn-primary {
+      display: inline-block; padding: .8rem 2.2rem;
+      background: var(--gold); color: var(--deep);
+      text-decoration: none; font-weight: 500;
+      font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+      transition: background .25s;
+    }
+    .btn-primary:hover { background: var(--amber); }
+    .btn-ghost {
+      font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(237,232,220,.4); text-decoration: none; font-weight: 400;
+      transition: color .25s; padding: .8rem 0;
+    }
+    .btn-ghost:hover { color: rgba(237,232,220,.75); }
+    .hero-scroll {
+      position: absolute; right: 8vw; bottom: 5vh;
+      display: flex; flex-direction: column; align-items: center; gap: .6rem;
+      opacity: 0; animation: fadeIn 1s 1.2s forwards;
+    }
+    .hero-scroll span {
+      font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(237,232,220,.25); writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s 1.5s infinite;
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 6rem 5vw; }
+    .section-label {
+      font-size: .7rem; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold); font-weight: 500; margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 400; line-height: 1.15; color: var(--white);
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    /* ── STORY ── */
+    .story {
+      background: var(--parchment);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5vw; align-items: center;
+    }
+    .story-visual {
+      position: relative;
+      height: 520px;
+    }
+    .story-bowl {
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(ellipse 70% 60% at 45% 50%, rgba(212,162,42,.07) 0%, transparent 60%),
+        linear-gradient(135deg, #120A0D 0%, #190F13 100%);
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    /* SVG bowl illustration */
+    .story-bowl svg {
+      width: 78%; max-width: 380px; opacity: .92;
+      animation: bowlFloat 5s ease-in-out infinite;
+    }
+    @keyframes bowlFloat {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-12px); }
+    }
+    .story-card {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      background: var(--deep); color: var(--white);
+      padding: 1.6rem 2rem; max-width: 220px;
+    }
+    .story-card-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem; font-weight: 300; color: var(--gold);
+      line-height: 1;
+    }
+    .story-card-text {
+      font-size: .78rem; letter-spacing: .05em; line-height: 1.6;
+      color: rgba(237,232,220,.7); margin-top: .4rem;
+    }
+    .story-text { padding: 1rem 0; }
+    .story-text p {
+      font-size: 1.05rem; line-height: 1.85; color: var(--charcoal);
+      font-weight: 300; margin-top: 1.5rem;
+    }
+    .story-signature {
+      margin-top: 2.4rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem; font-style: italic; color: var(--gold);
+    }
+
+    /* ── FEATURES STRIP ── */
+    .features {
+      background: var(--deep); padding: 3.5rem 5vw;
+      display: flex; justify-content: center; gap: 4vw; flex-wrap: wrap;
+    }
+    .feature {
+      display: flex; align-items: center; gap: 1rem;
+      color: rgba(237,232,220,.75);
+    }
+    .feature-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border: 1px solid var(--border-hi);
+      display: grid; place-items: center; color: var(--gold);
+    }
+    .feature-icon svg { width: 20px; height: 20px; }
+    .feature-text strong {
+      display: block; font-size: .78rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--white); font-weight: 500;
+    }
+    .feature-text span { font-size: .78rem; opacity: .6; }
+
+    /* ── MENU ── */
+    .menu { background: var(--cream); }
+    .menu-header { text-align: center; margin-bottom: 3.5rem; }
+
+    /* Tab bar */
+    .menu-tabs {
+      display: flex; gap: 0; list-style: none;
+      justify-content: center; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem; max-width: 860px; margin-left: auto; margin-right: auto;
+    }
+    .menu-tab {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      font-weight: 500; color: rgba(237,232,220,.38);
+      padding: .75rem 1.4rem; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color .25s, border-color .25s;
+      user-select: none;
+    }
+    .menu-tab:hover { color: rgba(237,232,220,.7); }
+    .menu-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* Panels */
+    .menu-panels { max-width: 680px; margin: 0 auto; }
+    .menu-panel { display: none; }
+    .menu-panel.active { display: block; }
+
+    .menu-category-note {
+      font-size: .76rem; color: rgba(237,232,220,.28); font-style: italic;
+      margin-bottom: 1.4rem; line-height: 1.65; letter-spacing: .01em;
+    }
+    .menu-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid rgba(237,232,220,.07);
+    }
+    .menu-row:first-of-type { border-top: 1px solid rgba(237,232,220,.07); }
+    .menu-row-left { min-width: 0; }
+    .menu-row-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.18rem; font-weight: 400; color: var(--white);
+      line-height: 1.3;
+    }
+    .menu-row-name em {
+      display: block;
+      font-style: italic; color: rgba(237,232,220,.42);
+      font-size: .87rem; margin-top: .1rem;
+    }
+    .menu-row-desc {
+      font-size: .75rem; color: rgba(237,232,220,.65); font-weight: 400;
+      margin-top: .3rem; line-height: 1.6;
+    }
+    .menu-row-price {
+      font-size: .95rem; color: var(--gold); font-weight: 500;
+      white-space: nowrap; padding-top: .15rem;
+      font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+    }
+    .menu-note {
+      text-align: center; margin-top: 3rem;
+      font-size: .75rem; color: rgba(237,232,220,.2);
+      font-style: italic; letter-spacing: .05em;
+    }
+
+    /* ── QUOTE BAND ── */
+    .quote-band {
+      background: var(--bg-lift);
+      padding: 5rem 10vw; text-align: left;
+      position: relative; overflow: hidden;
+    }
+    .quote-band::before {
+      content: '"';
+      position: absolute; top: -2rem; left: 5%;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22rem; color: rgba(237,232,220,.04);
+      line-height: 1; pointer-events: none;
+    }
+    .quote-band blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 300; font-style: italic;
+      color: var(--white); line-height: 1.5;
+      max-width: 800px; margin: 0 auto;
+      border-left: 2px solid var(--gold);
+      padding-left: 2rem; text-align: left;
+    }
+    .quote-band cite {
+      display: block; margin-top: 1.6rem;
+      font-style: normal; font-family: 'Jost', sans-serif;
+      font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(237,232,220,.55);
+    }
+
+    /* ── VISIT ── */
+    .visit {
+      background: var(--parchment);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .visit-info {
+      padding: 6rem 6vw;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .hours-table { margin-top: 2rem; width: 100%; }
+    .hours-table tr { border-bottom: 1px solid rgba(255,255,255,.07); }
+    .hours-table td {
+      padding: .65rem 0; font-size: .9rem;
+      color: var(--white); font-weight: 300;
+    }
+    .hours-table td:last-child { text-align: right; color: var(--gold); font-weight: 400; }
+    .visit-contact { margin-top: 2.5rem; }
+    .contact-row {
+      display: flex; align-items: center; gap: .9rem;
+      margin-bottom: .9rem;
+    }
+    .contact-row svg { width: 16px; height: 16px; color: var(--gold); flex-shrink: 0; }
+    .contact-row a, .contact-row span {
+      font-size: .9rem; color: var(--white); font-weight: 300;
+      text-decoration: none; transition: color .2s;
+    }
+    .contact-row a:hover { color: var(--gold); }
+    .visit-map {
+      background: var(--parchment);
+      min-height: 480px; position: relative; overflow: hidden;
+    }
+    .map-placeholder {
+      width: 100%; height: 100%;
+      display: grid; place-items: center;
+      background: var(--bg-alt);
+    }
+    .map-embed {
+      width: 100%; height: 100%;
+      border: none; filter: sepia(.15) contrast(1.05);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep); padding: 3rem 5vw;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; color: var(--white);
+      font-weight: 400; letter-spacing: .05em;
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-size: .72rem; letter-spacing: .15em; text-transform: uppercase;
+      color: rgba(237,232,220,.45); text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy {
+      font-size: .72rem; color: rgba(237,232,220,.25); width: 100%;
+      text-align: center; padding-top: 1rem;
+      border-top: 1px solid rgba(237,232,220,.07); margin-top: .5rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: .8; }
+      50% { opacity: .2; }
+    }
+
+    /* ── INTERSECTION OBSERVER REVEALS ── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .22s; }
+    .reveal-delay-3 { transition-delay: .36s; }
+    .reveal-delay-4 { transition-delay: .5s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      /* Layout collapses */
+      .story { grid-template-columns: 1fr; }
+      .story-visual { height: 300px; }
+      .story-card { right: 0; bottom: 0; }
+      .visit { grid-template-columns: 1fr; }
+      .visit-map { min-height: 300px; }
+
+      /* Header — wordmark on top, links in a row below */
+      .header-utility { display: none; }
+      .header-main {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        height: auto;
+        padding: .8rem 4vw .4rem;
+        gap: 0;
+      }
+      .nav-links-left  { order: 2; justify-content: center; }
+      .nav-links-right { order: 3; justify-content: center; }
+      .header-wordmark { order: 1; padding: .3rem 1rem .1rem; }
+
+      /* Merge both link lists into one centered row */
+      .nav-links-left, .nav-links-right {
+        display: flex; gap: 0;
+      }
+      .nav-links-left a,
+      .nav-links-right a:not(.header-cta) {
+        font-size: .58rem; letter-spacing: .13em; padding: .55rem .75rem;
+      }
+      .nav-links-left a::after,
+      .nav-links-right a:not(.header-cta)::after { left: .75rem; right: .75rem; bottom: .25rem; }
+      .header-cta { font-size: .58rem; letter-spacing: .13em; padding: .38rem .9rem; margin-left: .4rem; }
+
+      /* Shrink wordmark */
+      .wm-name { font-size: 1.1rem; letter-spacing: .32em; }
+      .wm-sub  { font-size: .42rem; letter-spacing: .32em; }
+      .wm-rule { max-width: 20px; }
+      .wm-diamond { width: 4px; height: 4px; }
+
+      /* Menu tabs: horizontal scroll instead of wrap */
+      .menu-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 0;
+      }
+      .menu-tabs::-webkit-scrollbar { display: none; }
+      .menu-tab { flex-shrink: 0; }
+
+      /* Menu panel full width */
+      .menu-panels { max-width: 100%; padding: 0 1rem; }
+
+      /* Features */
+      .features { flex-direction: column; align-items: flex-start; }
+
+      /* Quote band */
+      .quote-band { padding: 4rem 6vw; }
+      .quote-text { font-size: clamp(1.6rem, 5vw, 2.4rem); }
+    }
+
+    @media (max-width: 540px) {
+      section { padding: 4rem 5vw; }
+      .features { padding: 2.5rem 5vw; }
+      .hero-content { padding: 0 5vw 8vh; }
+      .footer-copy { font-size: .58rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── BORDER FRAME ── -->
+<div id="page-frame"><span class="c1"></span><span class="c2"></span></div>
+
+<!-- ══ HEADER ══ -->
+<header id="header">
+
+  <!-- Tier 1: slim utility bar -->
+  <div class="header-utility">
+    <div class="utility-left">
+      <span class="utility-item">348 Main St, Winooski, VT</span>
+      <div class="utility-divider"></div>
+      <span class="utility-item">Family Owned &amp; Operated</span>
+    </div>
+    <div class="utility-center">
+      <div class="utility-ornament"></div>
+      <span class="utility-center-text">Authentic Vietnamese</span>
+      <div class="utility-ornament"></div>
+    </div>
+    <div class="utility-right">
+      <span class="utility-item"><a href="tel:8026550707">(802) 655-0707</a></span>
+      <div class="utility-divider"></div>
+      <span class="utility-item">Open Daily</span>
+    </div>
+  </div>
+
+  <!-- Tier 2: main nav -->
+  <div class="header-main">
+    <ul class="nav-links-left">
+      <li><a href="#story">Our Story</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#visit">Hours</a></li>
+    </ul>
+
+    <a href="#" class="header-wordmark">
+      <div class="wm-rule-wrap">
+        <div class="wm-rule"></div>
+        <div class="wm-diamond"></div>
+        <div class="wm-rule right"></div>
+      </div>
+      <span class="wm-name">Pho Dang</span>
+      <span class="wm-sub">Vietnamese Café · Winooski</span>
+    </a>
+
+    <ul class="nav-links-right">
+      <li><a href="#visit">Location</a></li>
+      <li><a href="tel:8026550707" class="header-cta">Call Now</a></li>
+    </ul>
+  </div>
+
+</header>
+
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-tag">Winooski, Vermont · Family Owned</div>
+    <h1 class="hero-title">Authentic<br>Vietnamese<br><em>since day one.</em></h1>
+    <p class="hero-sub">Fresh broth, hand-rolled rolls, and recipes passed down through generations — made the way it's always been done.</p>
+    <div class="hero-cta">
+      <a href="#menu" class="btn-primary">View Menu</a>
+      <a href="#visit" class="btn-ghost">Find Us &nbsp;→</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ── FEATURES STRIP ── -->
+<div class="features">
+  <div class="feature">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+    </div>
+    <div class="feature-text">
+      <strong>Made Fresh Daily</strong>
+      <span>Never frozen, always from scratch</span>
+    </div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    <div class="feature-text">
+      <strong>Family Owned</strong>
+      <span>Recipes passed down with love</span>
+    </div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <div class="feature-text">
+      <strong>Authentic Recipes</strong>
+      <span>True Vietnamese tradition</span>
+    </div>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+        <line x1="9" y1="9" x2="9.01" y2="9"/>
+        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      </svg>
+    </div>
+    <div class="feature-text">
+      <strong>Community Favorite</strong>
+      <span>The best pho in Vermont</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── STORY ── -->
+<section class="story" id="story">
+  <div class="story-visual reveal">
+    <div class="story-bowl">
+      <!-- Pho bowl SVG illustration -->
+      <svg viewBox="0 0 400 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Broth ripple: expanding ring animation -->
+          <radialGradient id="brothGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#D4702E"/>
+            <stop offset="100%" stop-color="#C8602A"/>
+          </radialGradient>
+        </defs>
+
+        <!-- ── Steam wisps (5 total, staggered timing) ── -->
+        <path d="M148 65 Q154 44 146 22 Q138 0 143 -16" stroke="#D4A22A" stroke-width="1.4" stroke-linecap="round">
+          <animate attributeName="d" dur="3.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M148 65 Q154 44 146 22 Q138 0 143 -16;
+                    M148 65 Q140 44 148 22 Q156 0 150 -16;
+                    M148 65 Q154 44 146 22 Q138 0 143 -16"/>
+          <animate attributeName="opacity" dur="3.2s" repeatCount="indefinite" values=".55;.1;.55"/>
+        </path>
+        <path d="M175 55 Q169 34 176 12 Q183 -10 178 -26" stroke="#D4A22A" stroke-width="1.1" stroke-linecap="round">
+          <animate attributeName="d" dur="2.8s" begin="0.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M175 55 Q169 34 176 12 Q183 -10 178 -26;
+                    M175 55 Q182 34 175 12 Q168 -10 173 -26;
+                    M175 55 Q169 34 176 12 Q183 -10 178 -26"/>
+          <animate attributeName="opacity" dur="2.8s" begin="0.5s" repeatCount="indefinite" values=".35;.05;.35"/>
+        </path>
+        <path d="M200 52 Q208 30 200 8 Q192 -14 197 -30" stroke="#D4A22A" stroke-width="1.6" stroke-linecap="round">
+          <animate attributeName="d" dur="3.7s" begin="0.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M200 52 Q208 30 200 8 Q192 -14 197 -30;
+                    M200 52 Q192 30 200 8 Q208 -14 203 -30;
+                    M200 52 Q208 30 200 8 Q192 -14 197 -30"/>
+          <animate attributeName="opacity" dur="3.7s" begin="0.2s" repeatCount="indefinite" values=".6;.12;.6"/>
+        </path>
+        <path d="M225 57 Q231 36 224 14 Q217 -8 222 -24" stroke="#D4A22A" stroke-width="1.1" stroke-linecap="round">
+          <animate attributeName="d" dur="3s" begin="1s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M225 57 Q231 36 224 14 Q217 -8 222 -24;
+                    M225 57 Q218 36 225 14 Q232 -8 227 -24;
+                    M225 57 Q231 36 224 14 Q217 -8 222 -24"/>
+          <animate attributeName="opacity" dur="3s" begin="1s" repeatCount="indefinite" values=".4;.08;.4"/>
+        </path>
+        <path d="M252 65 Q244 42 252 20 Q260 -2 255 -18" stroke="#D4A22A" stroke-width="1.4" stroke-linecap="round">
+          <animate attributeName="d" dur="4.2s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M252 65 Q244 42 252 20 Q260 -2 255 -18;
+                    M252 65 Q260 42 252 20 Q244 -2 249 -18;
+                    M252 65 Q244 42 252 20 Q260 -2 255 -18"/>
+          <animate attributeName="opacity" dur="4.2s" begin="0.8s" repeatCount="indefinite" values=".45;.1;.45"/>
+        </path>
+
+        <!-- ── Bowl shadow (breathes with float) ── -->
+        <ellipse cx="200" cy="322" rx="145" ry="14" fill="rgba(0,0,0,.35)">
+          <animate attributeName="rx" dur="5s" repeatCount="indefinite" values="145;125;145"/>
+          <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values=".35;.15;.35"/>
+        </ellipse>
+
+        <!-- ── Bowl body ── -->
+        <path d="M60 160 Q60 280 200 300 Q340 280 340 160 Z" fill="#8B3A1A" opacity=".9"/>
+        <path d="M62 162 Q62 278 200 298 Q338 278 338 162 Z" fill="#A8451F"/>
+
+        <!-- ── Broth surface ── -->
+        <ellipse cx="200" cy="160" rx="140" ry="38" fill="url(#brothGrad)"/>
+
+        <!-- Broth ripple rings -->
+        <ellipse cx="200" cy="160" rx="30" ry="8" stroke="rgba(255,180,80,.22)" stroke-width="1" fill="none">
+          <animate attributeName="rx" dur="3s" repeatCount="indefinite" values="10;80;10"/>
+          <animate attributeName="ry" dur="3s" repeatCount="indefinite" values="3;22;3"/>
+          <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values=".5;0;.5"/>
+        </ellipse>
+        <ellipse cx="200" cy="160" rx="30" ry="8" stroke="rgba(255,180,80,.18)" stroke-width="1" fill="none">
+          <animate attributeName="rx" dur="3s" begin="1s" repeatCount="indefinite" values="10;80;10"/>
+          <animate attributeName="ry" dur="3s" begin="1s" repeatCount="indefinite" values="3;22;3"/>
+          <animate attributeName="opacity" dur="3s" begin="1s" repeatCount="indefinite" values=".4;0;.4"/>
+        </ellipse>
+
+        <!-- Broth shimmer sweep -->
+        <ellipse cx="175" cy="154" rx="55" ry="11" fill="rgba(255,210,120,.13)" transform="rotate(-10 175 154)">
+          <animate attributeName="cx" dur="4s" repeatCount="indefinite" values="165;215;165"/>
+          <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values=".13;.22;.13"/>
+        </ellipse>
+
+        <!-- ── Noodles (wave animation) ── -->
+        <path stroke="#F2E0B8" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".85">
+          <animate attributeName="d" dur="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M130 150 Q150 170 170 148 Q190 126 210 150 Q230 174 250 150;
+                    M130 154 Q150 132 170 154 Q190 176 210 152 Q230 128 250 154;
+                    M130 150 Q150 170 170 148 Q190 126 210 150 Q230 174 250 150"/>
+        </path>
+        <path stroke="#EDD8A8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".7">
+          <animate attributeName="d" dur="3.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M120 165 Q145 182 168 162 Q191 142 215 165 Q239 188 260 165;
+                    M120 161 Q145 144 168 166 Q191 188 215 163 Q239 140 260 163;
+                    M120 165 Q145 182 168 162 Q191 142 215 165 Q239 188 260 165"/>
+        </path>
+        <path stroke="#F0DCBA" stroke-width="2" stroke-linecap="round" fill="none" opacity=".55">
+          <animate attributeName="d" dur="2.8s" begin="0.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"
+            values="M140 172 Q158 156 178 174 Q198 192 220 172 Q242 152 258 172;
+                    M140 168 Q158 186 178 168 Q198 150 220 170 Q242 190 258 168;
+                    M140 172 Q158 156 178 174 Q198 192 220 172 Q242 152 258 172"/>
+        </path>
+
+        <!-- ── Beef slices ── -->
+        <ellipse cx="165" cy="155" rx="22" ry="10" fill="#6B2A10" transform="rotate(-15 165 155)" opacity=".9"/>
+        <ellipse cx="235" cy="158" rx="20" ry="9" fill="#7A3015" transform="rotate(12 235 158)" opacity=".85"/>
+
+        <!-- ── Herbs ── -->
+        <ellipse cx="190" cy="145" rx="12" ry="7" fill="#3d6b35" transform="rotate(-20 190 145)" opacity=".8"/>
+        <ellipse cx="210" cy="143" rx="10" ry="6" fill="#4a7f40" transform="rotate(15 210 143)" opacity=".75"/>
+
+        <!-- ── Green onion ── -->
+        <path d="M155 140 Q160 158 157 175" stroke="#5a8c3a" stroke-width="2" stroke-linecap="round"/>
+        <path d="M245 142 Q240 160 243 175" stroke="#5a8c3a" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- ── Bean sprouts ── -->
+        <path d="M175 148 L172 138" stroke="#c8d89a" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M220 148 L224 138" stroke="#c8d89a" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- ── Bowl rim ── -->
+        <ellipse cx="200" cy="130" rx="140" ry="34" fill="none" stroke="#8B3A1A" stroke-width="10"/>
+        <ellipse cx="200" cy="128" rx="140" ry="34" fill="none" stroke="#6B2210" stroke-width="4"/>
+
+        <!-- ── Chopsticks (gentle sway) ── -->
+        <g style="transform-origin:310px 88px">
+          <animate attributeName="transform" dur="5s" repeatCount="indefinite"
+            values="rotate(0);rotate(2);rotate(0)" additive="sum"/>
+          <line x1="295" y1="90" x2="330" y2="280" stroke="#8B6040" stroke-width="4" stroke-linecap="round"/>
+          <line x1="308" y1="88" x2="345" y2="278" stroke="#7A5030" stroke-width="4" stroke-linecap="round"/>
+          <line x1="295" y1="90" x2="308" y2="88" stroke="#8B6040" stroke-width="3"/>
+        </g>
+
+        <!-- ── Lime wedge ── -->
+        <path d="M52 200 Q42 218 58 228 Q74 238 82 220 Z" fill="#6aaa3a" opacity=".85"/>
+        <path d="M52 200 Q67 209 82 220" stroke="#5a9a2a" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <div class="story-card">
+      <div class="story-card-num">20+</div>
+      <div class="story-card-text">Years of authentic Vietnamese cooking in the heart of Vermont</div>
+    </div>
+  </div>
+
+  <div class="story-text">
+    <div class="section-label reveal">Our Story</div>
+    <h2 class="section-title reveal reveal-delay-1">
+      Cooked with the<br>same hands that<br><em>raised us</em>
+    </h2>
+    <p class="reveal reveal-delay-2">
+      Pho Dang was born from a mother's kitchen — a place where the broth simmered for hours,
+      the herbs were always fresh, and the door was always open. We brought that spirit with us
+      to Winooski, Vermont, and we've never let it go.
+    </p>
+    <p class="reveal reveal-delay-3">
+      Everything on our menu is prepared the way it's meant to be: slow, patient, and with intention.
+      Our pho broth is made fresh every single morning. Our spring rolls are hand-rolled. Our family
+      runs this kitchen the same way it ran ours — together.
+    </p>
+    <div class="story-signature reveal reveal-delay-4">— The Dang Family</div>
+  </div>
+</section>
+
+<!-- ── QUOTE BAND ── -->
+<div class="quote-band">
+  <blockquote>
+    "Bringing to you the best Vietnamese food in town — made with love, just like home."
+  </blockquote>
+  <cite>Pho Dang Vietnamese Café · Winooski, Vermont</cite>
+</div>
+
+<!-- ── MENU ── -->
+<section class="menu" id="menu">
+  <div class="menu-header">
+    <div class="section-label reveal">What We Serve</div>
+    <h2 class="section-title reveal reveal-delay-1">A taste of <em>Vietnam</em><br>in every dish</h2>
+  </div>
+  <!-- Tab navigation -->
+  <ul class="menu-tabs" id="menuTabs">
+    <li class="menu-tab active" data-panel="appetizers">Appetizers</li>
+    <li class="menu-tab" data-panel="pho">Phở &amp; Soups</li>
+    <li class="menu-tab" data-panel="bun">Vermicelli</li>
+    <li class="menu-tab" data-panel="rice">Rice Plates</li>
+    <li class="menu-tab" data-panel="specials">Specials</li>
+    <li class="menu-tab" data-panel="drinks">Drinks</li>
+  </ul>
+
+  <div class="menu-panels reveal">
+
+    <!-- APPETIZERS -->
+    <div class="menu-panel active" id="panel-appetizers">
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Chả Giò <em>Crispy Eggrolls (4)</em></div>
+          <div class="menu-row-desc">Deep fried pork &amp; noodle rolls · peanut or sweet chili sauce</div>
+        </div>
+        <div class="menu-row-price">$6</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Gỏi Cuốn Tôm Thịt <em>Shrimp &amp; Pork Spring Rolls (2)</em></div>
+          <div class="menu-row-desc">Rice paper · shrimp, pork, lettuce, noodles</div>
+        </div>
+        <div class="menu-row-price">$6</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Gỏi Cuốn Chay <em>Veggie Spring Rolls (2)</em></div>
+          <div class="menu-row-desc">Rice paper · tofu, lettuce, noodles</div>
+        </div>
+        <div class="menu-row-price">$6</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Chả Giò Chay <em>Veggie Eggrolls</em></div>
+          <div class="menu-row-desc">Taro &amp; sweet potato · peanut or sweet chili sauce</div>
+        </div>
+        <div class="menu-row-price">$6</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Đậu Hũ Chiên <em>Fried Tofu</em></div>
+          <div class="menu-row-desc">Deep fried tofu · peanut sauce</div>
+        </div>
+        <div class="menu-row-price">$6</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Tiger Rolls</div>
+          <div class="menu-row-desc">Cream cheese, bell peppers &amp; onion · sweet chili sauce</div>
+        </div>
+        <div class="menu-row-price">$6</div>
+      </div>
+    </div>
+
+    <!-- PHO & SOUPS -->
+    <div class="menu-panel" id="panel-pho">
+      <p class="menu-category-note">All pho topped with onions, scallions &amp; cilantro · served with bean sprouts, fresh basil, lime &amp; jalapeño on the side</p>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Gà <em>Chicken Pho</em></div>
+          <div class="menu-row-desc">Light golden broth with tender chicken</div>
+        </div>
+        <div class="menu-row-price">$10</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Đặc Biệt <em>House Special Combination</em></div>
+          <div class="menu-row-desc">Rare beef, brisket, tendon &amp; well-done beef</div>
+        </div>
+        <div class="menu-row-price">$12</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Tái <em>Rare Beef</em></div>
+        </div>
+        <div class="menu-row-price">$12</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Tái Bò Viên <em>Rare Beef &amp; Meatball</em></div>
+        </div>
+        <div class="menu-row-price">$12</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Tái Chín Nạm <em>Rare Beef &amp; Well-Done Flank</em></div>
+        </div>
+        <div class="menu-row-price">$12</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Tái Nạm Gân <em>Rare Beef, Brisket &amp; Tendon</em></div>
+        </div>
+        <div class="menu-row-price">$12</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Phở Rau Cải <em>Vegetarian</em></div>
+          <div class="menu-row-desc">Tofu, broccoli, carrots, celery, mushrooms, bell pepper · choice of broth</div>
+        </div>
+        <div class="menu-row-price">$12</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Bò Huế <em>Spicy Beef &amp; Pork Noodle Soup</em></div>
+          <div class="menu-row-desc">Bold lemongrass broth · thick round noodles</div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Hủ Tiếu Mì <em>Rice &amp; Egg Noodle Soup</em></div>
+          <div class="menu-row-desc">Pork, shrimp &amp; quail egg · onion &amp; scallions</div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+    </div>
+
+    <!-- VERMICELLI -->
+    <div class="menu-panel" id="panel-bun">
+      <p class="menu-category-note">All bowls topped with carrots, cilantro, scallions &amp; crushed peanuts · served with lettuce, cucumber, bean sprouts &amp; sweet dipping sauce</p>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Gà Nướng <em>Grilled Chicken</em></div>
+        </div>
+        <div class="menu-row-price">$14</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Gà Nướng Chả Giò <em>Grilled Chicken &amp; Eggrolls</em></div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Thịt Nướng <em>Grilled Pork</em></div>
+        </div>
+        <div class="menu-row-price">$14</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Thịt Nướng Chả Giò <em>Grilled Pork &amp; Eggrolls</em></div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Bò Xào Xả Ớt <em>Lemongrass Chili Beef</em></div>
+          <div class="menu-row-desc">Stir-fried beef with lemongrass, onion &amp; hot pepper</div>
+        </div>
+        <div class="menu-row-price">$14</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Bò Xào Xả Ớt Chả Giò <em>Lemongrass Chili Beef &amp; Eggrolls</em></div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Xào Thập Cẩm <em>Stir-Fry Combination</em></div>
+          <div class="menu-row-desc">Beef, chicken, shrimp &amp; quail eggs with onions</div>
+        </div>
+        <div class="menu-row-price">$16</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Bún Tàu Hũ Xào Xả Ớt <em>Lemongrass Chili Tofu</em></div>
+        </div>
+        <div class="menu-row-price">$14</div>
+      </div>
+    </div>
+
+    <!-- RICE PLATES -->
+    <div class="menu-panel" id="panel-rice">
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Sườn Nướng <em>Grilled Pork Chop &amp; Rice</em></div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Sườn Nướng &amp; Trứng <em>Pork Chop, Rice &amp; Over Easy Egg</em></div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Chiên Dương Châu <em>House Fried Rice</em></div>
+          <div class="menu-row-desc">Chef's special · pork, Chinese sausage, shrimp &amp; egg</div>
+        </div>
+        <div class="menu-row-price">$16</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Bò Gà Xào Xả Ớt <em>Lemongrass Beef &amp; Chicken</em></div>
+          <div class="menu-row-desc">Stir-fried with lemongrass, onions &amp; hot pepper</div>
+        </div>
+        <div class="menu-row-price">$16</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Xào Thập Cẩm <em>Stir-Fry Combination</em></div>
+          <div class="menu-row-desc">Chicken, beef, shrimp &amp; quail egg with onion</div>
+        </div>
+        <div class="menu-row-price">$14</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Xào Rau Cải <em>Vegetable Stir-Fry</em></div>
+          <div class="menu-row-desc">Broccoli, carrots, celery, mushrooms, bell pepper &amp; onions · choice of beef, chicken or tofu</div>
+        </div>
+        <div class="menu-row-price">$15</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cơm Tàu Hũ Xào Xả Ớt <em>Lemongrass Tofu</em></div>
+          <div class="menu-row-desc">Stir-fried tofu with lemongrass, onion &amp; hot pepper</div>
+        </div>
+        <div class="menu-row-price">$14</div>
+      </div>
+    </div>
+
+    <!-- SPECIALS -->
+    <div class="menu-panel" id="panel-specials">
+      <p class="menu-category-note">Ask your server about today's specials and seasonal preparations</p>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Salmon Deluxe</div>
+          <div class="menu-row-desc">Grilled salmon sautéed with house sauce — preparation varies daily</div>
+        </div>
+        <div class="menu-row-price">Market</div>
+      </div>
+    </div>
+
+    <!-- DRINKS -->
+    <div class="menu-panel" id="panel-drinks">
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cà Phê Sữa Đá <em>Vietnamese Iced Coffee</em></div>
+          <div class="menu-row-desc">Slow-drip filtered coffee · sweetened condensed milk · ice</div>
+        </div>
+        <div class="menu-row-price">$4</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cà Phê Đá <em>Black Iced Coffee</em></div>
+          <div class="menu-row-desc">Filtered coffee served over ice, unsweetened</div>
+        </div>
+        <div class="menu-row-price">$3</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Cà Phê Sữa Nóng <em>Hot Coffee with Condensed Milk</em></div>
+          <div class="menu-row-desc">Slow-drip hot coffee · sweetened condensed milk</div>
+        </div>
+        <div class="menu-row-price">$4</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Sữa Đậu Nành <em>Soy Bean Milk</em></div>
+          <div class="menu-row-desc">Fresh, lightly sweetened</div>
+        </div>
+        <div class="menu-row-price">$3</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Nước Dừa Rang <em>Roasted Coconut Juice</em></div>
+          <div class="menu-row-desc">Warm, toasty coconut — a Vietnamese classic</div>
+        </div>
+        <div class="menu-row-price">$3</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Trà Cúc <em>Chrysanthemum Tea</em></div>
+          <div class="menu-row-desc">Lightly floral, served hot or iced</div>
+        </div>
+        <div class="menu-row-price">$3</div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-row-left">
+          <div class="menu-row-name">Nước Ngọt <em>Soda</em></div>
+          <div class="menu-row-desc">Coke · Diet Coke · Pepsi · Diet Pepsi · Ginger Ale · Sprite · Mt. Dew · Sunkist · Seltzer</div>
+        </div>
+        <div class="menu-row-price">$3</div>
+      </div>
+    </div>
+
+  </div>
+  <p class="menu-note reveal">Prices available in café · Menu items may vary by season</p>
+</section>
+
+<!-- ── VISIT ── -->
+<section class="visit" id="visit" style="padding:0;">
+  <div class="visit-info">
+    <div class="section-label reveal">Find Us</div>
+    <h2 class="section-title reveal reveal-delay-1">Come sit <em>with us</em></h2>
+
+    <table class="hours-table reveal reveal-delay-2">
+      <tbody>
+        <tr>
+          <td>Monday – Friday</td>
+          <td>10:30 AM – 9:00 PM</td>
+        </tr>
+        <tr>
+          <td>Saturday</td>
+          <td>11:30 AM – 8:00 PM</td>
+        </tr>
+        <tr>
+          <td>Sunday</td>
+          <td>11:30 AM – 8:00 PM</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="visit-contact reveal reveal-delay-3">
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span>348 Main St, Winooski, VT 05404</span>
+      </div>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.52-1.52a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+        </svg>
+        <a href="tel:8026550707">(802) 655-0707</a>
+      </div>
+      <div class="contact-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+        </svg>
+        <a href="https://www.facebook.com/PhoDangWinooski" target="_blank" rel="noopener">facebook.com/PhoDangWinooski</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="visit-map">
+    <iframe
+      class="map-embed"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2873.5!2d-73.185!3d44.493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cca7a5b5e4af4a5%3A0x0!2s348+Main+St%2C+Winooski%2C+VT+05404!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Pho Dang location map">
+    </iframe>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">Pho <span>Dang</span> Vietnamese Café</div>
+  <nav class="footer-links">
+    <a href="#story">Story</a>
+    <a href="#menu">Menu</a>
+    <a href="#visit">Hours</a>
+    <a href="tel:8026550707">Call Us</a>
+  </nav>
+  <div class="footer-copy">
+    © 2025 Pho Dang Vietnamese Café · 348 Main St, Winooski, VT 05404 · Family Owned &amp; Operated
+  </div>
+</footer>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // Intersection observer for reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Menu tabs
+  document.querySelectorAll('.menu-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
